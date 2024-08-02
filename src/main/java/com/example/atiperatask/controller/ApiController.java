@@ -1,6 +1,8 @@
 package com.example.atiperatask.controller;
 
+import com.example.atiperatask.model.response.GetUserReposResponse;
 import com.example.atiperatask.service.ApiService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -17,11 +19,11 @@ public class ApiController {
 
     private final ApiService apiService;
 
-    @GetMapping("/users/{user}")
-    public Object GetUserRepos(
+    @GetMapping("/users/{user}/repos")
+    public GetUserReposResponse getUserRepos(
             @PathVariable String user
-    ){
-        String redirectUrl = "https://api.github.com/users/" + user + "/repos";
-        return apiService.redirectRequest(redirectUrl);
+    ) throws JsonProcessingException {
+        String apiUrl = "https://api.github.com";
+        return apiService.getAllUserRepos(apiUrl, user);
     }
 }
