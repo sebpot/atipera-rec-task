@@ -6,6 +6,7 @@ import com.example.atiperatask.model.wrapper.RepositoryWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,11 +18,14 @@ import java.util.regex.Pattern;
 @Service
 public class ApiService {
 
+    @Value("${api.url}")
+    private String apiUrl;
+
     private final RestTemplate restTemplate;
 
     public ApiService(RestTemplate restTemplate) {this.restTemplate = restTemplate;}
 
-    public GetUserReposResponse getAllUserRepos(String apiUrl, String user) throws JsonProcessingException {
+    public GetUserReposResponse getAllUserRepos(String user) throws JsonProcessingException {
         String userReposUrl = apiUrl + "/users/" + user + "/repos";
         String reposResponse = restTemplate.getForObject(userReposUrl, String.class);
 
@@ -61,14 +65,5 @@ public class ApiService {
         return GetUserReposResponse.builder()
                 .repos(repoWrappers)
                 .build();
-    }
-
-    private static String extractJsonString(String response) {
-        Pattern pattern = Pattern.compile("\\{.*\\}");
-        Matcher matcher = pattern.matcher(response);
-        if (matcher.find()) {
-            return matcher.group();
-        }
-        return null;
     }
 }
